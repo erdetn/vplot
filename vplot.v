@@ -9,6 +9,18 @@ module vplot
 
 #include "gnuplot_i.h"
 
+pub const (
+	lines          = 'lines'
+	points         = 'points'
+	linespoints    = 'linespoints'
+	impulses       = 'impulses'
+	dots           = 'dots'
+	steps          = 'steps'
+	errorbars      = 'errorbars'
+	boxes          = 'boxes'
+	boxeserrorbars = 'boxeserrorbars'
+)
+
 struct C.gnuplot_ctrl{}
 pub struct Plot {
 	ptr &C.gnuplot_ctrl
