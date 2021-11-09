@@ -61,7 +61,7 @@ pub fn (this Plot)style(style string) {
 }
 
 fn C.gnuplot_set_xlabel(&C.gnuplot_ctrl, &char)
-pub fn (this Plot)xlabel(label string) {
+pub fn (this Plot)label_x(label string) {
 	unsafe {
 		cstr := &char(label.str)
 		C.gnuplot_set_xlabel(this.ptr, cstr)
@@ -69,7 +69,7 @@ pub fn (this Plot)xlabel(label string) {
 }
 
 fn C.gnuplot_set_ylabel(&C.gnuplot_ctrl, &char)
-pub fn (this Plot)ylabel(label string) {
+pub fn (this Plot)label_y(label string) {
 	unsafe {
 		cstr := &char(label.str)
 		C.gnuplot_set_ylabel(this.ptr, cstr)

@@ -20,8 +20,8 @@ fn main() {
 
 	mut p1 := vplot.new_plot()
 
-	p1.xlabel('X index')
-	p1.ylabel('y=log(x)')
+	p1.label_x('X index')
+	p1.label_y('y=log(x)')
 	p1.plot_y(y, 'Test X only') or {
 		println('ERROR: ${err.msg}')
 	}
