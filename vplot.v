@@ -10,15 +10,15 @@ module vplot
 #include "gnuplot_i.h"
 
 pub const (
-	lines          = 'lines'
-	points         = 'points'
-	linespoints    = 'linespoints'
-	impulses       = 'impulses'
-	dots           = 'dots'
-	steps          = 'steps'
-	errorbars      = 'errorbars'
-	boxes          = 'boxes'
-	boxeserrorbars = 'boxeserrorbars'
+	style_lines          = 'lines'
+	style_points         = 'points'
+	style_linespoints    = 'linespoints'
+	style_impulses       = 'impulses'
+	style_dots           = 'dots'
+	style_steps          = 'steps'
+	style_errorbars      = 'errorbars'
+	style_boxes          = 'boxes'
+	style_boxeserrorbars = 'boxeserrorbars'
 )
 
 struct C.gnuplot_ctrl{}
@@ -43,6 +43,12 @@ pub fn (this Plot)command(command string) {
 	unsafe {
 		cstr := &char(command.str)
 		C.gnuplot_cmd(this.ptr, cstr)
+	}
+}
+
+pub fn (this Plot)commands(commands []string) {
+	for command in commands {
+		this.command(command)
 	}
 }
 
