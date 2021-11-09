@@ -1,0 +1,29 @@
+module main
+
+import vplot
+import os
+import math
+
+fn sig() ([]f64, []f64) {
+	mut x := []f64{}
+	mut s := []f64{}
+
+	for i in 1 .. 1000 {
+		x << f64(i)
+		s << f64(math.log(i))
+	}
+	return x, s
+}
+
+fn main() {
+	x, y := sig()
+
+	mut p1 := vplot.new_plot()
+
+	p1.plot(x, y, 'Test X only') or {
+		println('ERROR: ${err.msg}')
+	}
+	os.input('Press any key to continue')
+
+	p1.close()
+}
