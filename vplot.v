@@ -24,6 +24,8 @@ pub const (
 struct C.gnuplot_ctrl{}
 pub struct Plot {
 	ptr &C.gnuplot_ctrl
+mut:
+	multiplot bool
 }
 
 fn C.gnuplot_init() &C.gnuplot_ctrl
@@ -81,7 +83,7 @@ pub fn (this Plot)reset() {
 	C.gnuplot_resetplot(this.ptr)
 }
 
-fn C.gnuplot_plot_x(&C.gnuplot_ctrl, &f64, int, &char)
+fn C.gnuplot_plot_x(&C.gnuplot_ctrl, &f64, int, &char, bool)
 pub fn (this Plot)plot(d []f64, title string)? {
 	if d.len == 0 {
 		return error('Input array is empty.')
@@ -90,11 +92,11 @@ pub fn (this Plot)plot(d []f64, title string)? {
 		d_ptr := &d[0]
 		n := int(d.len)
 		ctitle := &char(title.str)
-		C.gnuplot_plot_x(this.ptr, d_ptr, n, ctitle)
+		C.gnuplot_plot_x(this.ptr, d_ptr, n, ctitle, this.multiplot)
 	}
 }
 
-fn C.gnuplot_plot_xy(&C.gnuplot_ctrl, &f64, &f64, int, &char)
+fn C.gnuplot_plot_xy(&C.gnuplot_ctrl, &f64, &f64, int, &char, bool)
 pub fn (this Plot)plot2(x []f64, y []f64, title string)? {
 	if x.len == 0 || y.len == 0 {
 		return error('Input array X and/or Y is/are empty.')
@@ -108,24 +110,24 @@ pub fn (this Plot)plot2(x []f64, y []f64, title string)? {
 		x_ptr := &x[0]
 		y_ptr := &y[0]
 		ctitle := &char(title.str)
-		C.gnuplot_plot_xy(this.ptr, x_ptr, y_ptr, n, ctitle)
+		C.gnuplot_plot_xy(this.ptr, x_ptr, y_ptr, n, ctitle, this.multiplot)
 	}
 }
 
-fn C.gnuplot_plot_slope(&C.gnuplot_ctrl, f64, f64, &char)
+fn C.gnuplot_plot_slope(&C.gnuplot_ctrl, f64, f64, &char, bool)
 pub fn (this Plot)plot_slope(a f64, b f64, title string) {
 	unsafe {
 		ctitle := &char(title.str)
-		C.gnuplot_plot_slope(this.ptr, a, b, ctitle)
+		C.gnuplot_plot_slope(this.ptr, a, b, ctitle, this.multiplot)
 	}
 }
 
-fn C.gnuplot_plot_equation(&C.gnuplot_ctrl, &char, &char)
+fn C.gnuplot_plot_equation(&C.gnuplot_ctrl, &char, &char, bool)
 pub fn (this Plot)plot_equation(equation string, title string) {
 	unsafe {
 		cequation := &char(equation.str)
 		ctitle := &char(title.str)
-		C.gnuplot_plot_equation(this.ptr, cequation, ctitle)
+		C.gnuplot_plot_equation(this.ptr, cequation, ctitle, this.multiplot)
 	}
 }
 
@@ -216,4 +218,42 @@ pub fn plotter(session PlotSession)? {
 		n      := int(session.x.len)
 		C.gnuplot_plot_once(ctitle, cstyle, clblx, clbly, x_ptr, y_ptr, n)
 	}
+}
+
+pub enum Stack {
+	rows_first
+	columns_first
+}
+
+pub struct Multiplotter {
+pub mut:
+	rows u32 [required]
+	cols u32 [required]
+	title string [required]
+	stack Stack = Stack.rows_first
+	scale_x u32 = 1
+	scale_y u32 = 1
+}
+
+pub fn (mut this Plot)enable_multiplot(mp Multiplotter) {
+	mut cmd := ''
+
+	this.multiplot = true
+
+	stack_str := if mp.stack == Stack.rows_first {'rowsfirst'} else {'columnsfirst'}
+
+	cmd += 'set size 1,1 \n'
+	cmd += 'set origin 0, 0\n'
+	cmd += 'set multiplot '
+	cmd += 'layout ${mp.rows}, ${mp.cols} '
+	cmd += '${stack_str} downwards '
+	cmd += 'title \"${mp.title}\" '
+	cmd += 'scale ${mp.scale_x}, ${mp.scale_y}'
+	
+	this.command(cmd)
+}
+
+pub fn (mut this Plot)disable_multiplot() {
+	this.multiplot = false
+	this.command('unset multiplot')
 }

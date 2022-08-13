@@ -67,7 +67,7 @@ char const * gnuplot_tmpfile(gnuplot_ctrl * handle);
  * @param tmp_filename
  * @param title
  */
-void gnuplot_plot_atmpfile(gnuplot_ctrl * handle, char const* tmp_filename, char const* title);
+void gnuplot_plot_atmpfile(gnuplot_ctrl * handle, char const* tmp_filename, char const* title, bool multiplot);
 
 /*---------------------------------------------------------------------------
                             Function codes
@@ -332,7 +332,8 @@ void gnuplot_plot_x(
     gnuplot_ctrl    *   handle,
     double          *   d,
     int                 n,
-    char            *   title
+    char            *   title,
+	bool                multiplot
 )
 {
     int     i ;
@@ -356,7 +357,7 @@ void gnuplot_plot_x(
     }
     fclose(tmpfd) ;
 
-    gnuplot_plot_atmpfile(handle,tmpfname,title);
+    gnuplot_plot_atmpfile(handle,tmpfname,title, multiplot);
     return ;
 }
 
@@ -399,7 +400,8 @@ void gnuplot_plot_xy(
     double          *   x,
     double          *   y,
     int                 n,
-    char            *   title
+    char            *   title,
+	bool                multiplot
 )
 {
     int     i ;
@@ -423,7 +425,7 @@ void gnuplot_plot_xy(
     }
     fclose(tmpfd) ;
 
-    gnuplot_plot_atmpfile(handle,tmpfname,title);
+    gnuplot_plot_atmpfile(handle,tmpfname,title, multiplot);
     return ;
 }
 
@@ -481,9 +483,9 @@ void gnuplot_plot_once(
       gnuplot_set_ylabel(handle, "Y");
   }
   if (y==NULL) {
-      gnuplot_plot_x(handle, x, n, title);
+      gnuplot_plot_x(handle, x, n, title, false);
   } else {
-      gnuplot_plot_xy(handle, x, y, n, title);
+      gnuplot_plot_xy(handle, x, y, n, title, false);
   }
   printf("press ENTER to continue\n");
   while (getchar()!='\n') {}
@@ -495,10 +497,11 @@ void gnuplot_plot_slope(
     gnuplot_ctrl    *   handle,
     double              a,
     double              b,
-    char            *   title
+    char            *   title,
+	bool                multiplot
 )
 {
-    char const *    cmd    = (handle->nplots > 0) ? "replot" : "plot";
+    char const *    cmd    = (handle->nplots > 0) ? ((multiplot) ? "plot" : "replot") : "plot";
     title                  = (title == NULL)      ? "(none)" : title;
 
     gnuplot_cmd(handle, "%s %.18e * x + %.18e title \"%s\" with %s",
@@ -512,10 +515,11 @@ void gnuplot_plot_slope(
 void gnuplot_plot_equation(
     gnuplot_ctrl    *   h,
     char            *   equation,
-    char            *   title
+    char            *   title,
+	bool                multiplot           
 )
 {
-    char const *    cmd    = (h->nplots > 0) ? "replot" : "plot";
+    char const *    cmd    = (h->nplots > 0) ? ((multiplot) ? "plot" : "replot") : "plot";
     title                  = (title == NULL)      ? "(none)" : title;
 
     gnuplot_cmd(h, "%s %s title \"%s\" with %s",
@@ -702,11 +706,11 @@ char const * gnuplot_tmpfile(gnuplot_ctrl * handle)
     return tmp_filename;
 }
 
-void gnuplot_plot_atmpfile(gnuplot_ctrl * handle, char const* tmp_filename, char const* title)
+void gnuplot_plot_atmpfile(gnuplot_ctrl * handle, char const* tmp_filename, char const* title, bool multiplot)
 {
-    char const *    cmd    = (handle->nplots > 0) ? "replot" : "plot";
+    char const *    cmd    = (handle->nplots > 0) ? ((multiplot) ? "plot" : "replot") : "plot";
     title                  = (title == NULL)      ? "(none)" : title;
-    gnuplot_cmd(handle, "%s \"%s\" title \"%s\" with %s", cmd, tmp_filename,
+    gnuplot_cmd(handle, "%s \"%s\" title \"%s\" with %s\n", cmd, tmp_filename,
                   title, handle->pstyle) ;
     handle->nplots++ ;
     return ;

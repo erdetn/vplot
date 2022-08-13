@@ -29,6 +29,7 @@
                                 Includes
  ---------------------------------------------------------------------------*/
 #include <stdio.h>
+#include <stdbool.h>
 
 /** Maximal number of simultaneous temporary files */
 #define GP_MAX_TMP_FILES    64
@@ -216,7 +217,7 @@ void gnuplot_resetplot(gnuplot_ctrl * h);
   @endcode
  */
 /*--------------------------------------------------------------------------*/
-void gnuplot_plot_x(gnuplot_ctrl * handle, double * d, int n, char * title);
+void gnuplot_plot_x(gnuplot_ctrl * handle, double * d, int n, char * title, bool multiplot);
 
 /*-------------------------------------------------------------------------*/
 /**
@@ -254,7 +255,8 @@ void gnuplot_plot_xy(
     double          *   x,
     double          *   y,
     int                 n,
-    char            *   title
+    char            *   title,
+	bool                multiplot
 ) ;
 
 
@@ -317,7 +319,8 @@ void gnuplot_plot_slope(
     gnuplot_ctrl    *   handle,
     double              a,
     double              b,
-    char            *   title
+    char            *   title,
+	bool                multiplot
 ) ;
 
 /*-------------------------------------------------------------------------*/
@@ -344,7 +347,7 @@ void gnuplot_plot_slope(
   @endcode
  */
 /*--------------------------------------------------------------------------*/
-void gnuplot_plot_equation(gnuplot_ctrl * h, char * equation, char * title) ;
+void gnuplot_plot_equation(gnuplot_ctrl * h, char * equation, char * title, bool multiplot) ;
 
 /**
  * Writes a CSV file for use with gnuplot commands later.  Allows files to also be saved for post
