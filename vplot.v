@@ -27,7 +27,7 @@ pub struct Plot {
 }
 
 fn C.gnuplot_init() &C.gnuplot_ctrl
-pub fn new_plot() Plot {
+pub fn new() Plot {
 	return Plot {
 		ptr: C.gnuplot_init()
 	}
@@ -82,7 +82,7 @@ pub fn (this Plot)reset() {
 }
 
 fn C.gnuplot_plot_x(&C.gnuplot_ctrl, &f64, int, &char)
-pub fn (this Plot)plot_y(d []f64, title string)? {
+pub fn (this Plot)plot(d []f64, title string)? {
 	if d.len == 0 {
 		return error('Input array is empty.')
 	}
@@ -95,7 +95,7 @@ pub fn (this Plot)plot_y(d []f64, title string)? {
 }
 
 fn C.gnuplot_plot_xy(&C.gnuplot_ctrl, &f64, &f64, int, &char)
-pub fn (this Plot)plot_xy(x []f64, y []f64, title string)? {
+pub fn (this Plot)plot2(x []f64, y []f64, title string)? {
 	if x.len == 0 || y.len == 0 {
 		return error('Input array X and/or Y is/are empty.')
 	}
@@ -110,22 +110,6 @@ pub fn (this Plot)plot_xy(x []f64, y []f64, title string)? {
 		ctitle := &char(title.str)
 		C.gnuplot_plot_xy(this.ptr, x_ptr, y_ptr, n, ctitle)
 	}
-}
-
-pub fn (this Plot)plot(x []f64, y []f64, title string)? {
-	if x.len == 0 && y.len == 0 {
-		return error('Both input arrays are empty.')
-	}
-
-	if x.len > 0 && y.len == 0 {
-		this.plot_y(x, title)?
-	}
-
-	if x.len == 0 && y.len > 0 {
-		this.plot_y(y, title)?
-	}
-	
-	this.plot_xy(x, y, title)?
 }
 
 fn C.gnuplot_plot_slope(&C.gnuplot_ctrl, f64, f64, &char)
@@ -212,7 +196,7 @@ pub struct PlotSession {
 }
 
 fn C.gnuplot_plot_once(&char, &char, &char, &char, &f64, &f64, int)
-pub fn plot(session PlotSession)? {
+pub fn plotter(session PlotSession)? {
 	if session.x.len == 0 || session.y.len == 0 {
 		return error('Input array X and/or Y is/are empty.')
 	}
