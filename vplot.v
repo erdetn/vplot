@@ -213,8 +213,8 @@ pub fn plotter(session PlotSession)? {
 		cstyle := &char(session.style.str)
 		clblx  := &char(session.label_x.str)
 		clbly  := &char(session.label_y.str)
-		x_ptr  := &f64(session.x[0])
-		y_ptr  := &f64(session.y[0])
+		x_ptr  := &f64(&session.x[0])
+		y_ptr  := &f64(&session.y[0])
 		n      := int(session.x.len)
 		C.gnuplot_plot_once(ctitle, cstyle, clblx, clbly, x_ptr, y_ptr, n)
 	}
