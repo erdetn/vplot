@@ -34,6 +34,10 @@
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <errno.h>
 
 #ifdef WIN32
 #include <io.h>
