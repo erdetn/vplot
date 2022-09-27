@@ -35,13 +35,17 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <ctype.h>
 #include <errno.h>
 
-#ifdef WIN32
-#include <io.h>
-#endif // #ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
+	#include <windows.h>
+	#include <tchar.h>
+	#include <io.h>
+#else 
+	#include <unistd.h>
+#endif
+
 
 /*---------------------------------------------------------------------------
                                 Defines
