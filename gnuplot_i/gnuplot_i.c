@@ -694,7 +694,7 @@ char const * gnuplot_tmpfile(gnuplot_ctrl * handle)
     }
     strcpy(tmp_filename, tmp_filename_template);
 
-#ifdef WIN32
+#if defined(_WIN32) || defined(WIN32)
     if (_mktemp(tmp_filename) == NULL)
     {
         return NULL;
